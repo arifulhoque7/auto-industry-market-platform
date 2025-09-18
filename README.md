@@ -399,36 +399,6 @@ docker-compose down
 - **Metrics**: http://localhost:3001/metrics (Prometheus format)
 - **Logs**: Check `backend/api/logs/` directory
 
-## 🤝 Contributing
-
-This project demonstrates proficiency in:
-- Full-stack development
-- System design and architecture
-- Real-time communication
-- Database design and optimization
-- API development and documentation
-- Modern JavaScript/TypeScript
-- DevOps and deployment practices
-
-## 📝 Additional Notes for Interviewers
-
-This project showcases:
-
-1. **Full-Stack Proficiency**: Complete implementation from database to UI
-2. **Architecture Design**: Microservices, caching, message queues
-3. **Modern Tech Stack**: Latest versions of popular frameworks
-4. **Best Practices**: Security, performance, code organization
-5. **Documentation**: Comprehensive API docs and README
-6. **Real-world Application**: Practical business use case
-7. **Scalability**: Built with growth in mind
-8. **Testing Approach**: Easy to test all functionalities
-
-### Time to First Interaction
-With all prerequisites installed, the application can be fully operational in under 10 minutes.
-
-### Contact
-For any questions or issues during setup, please reach out through the repository issues.
-
 ## 📄 License
 
 MIT License - Feel free to use this project for evaluation purposes.
