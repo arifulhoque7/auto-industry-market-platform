@@ -1,0 +1,1007 @@
+openapi: 3.0.0
+info:
+  title: Auto Industry Marketplace API
+  version: 1.0.0
+  description: API documentation for the Auto Industry Marketplace platform
+  contact:
+    name: API Support
+    email: support@automarketplace.com
+
+servers:
+  - url: http://localhost:3001
+    description: Development server
+  - url: https://api.automarketplace.com
+    description: Production server
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+          format: email
+        name:
+          type: string
+        role:
+          type: string
+          enum: [car_owner, repair_shop, vendor]
+        businessName:
+          type: string
+        businessLicense:
+          type: string
+        phone:
+          type: string
+        address:
+          type: object
+        isActive:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+
+    ServiceRequest:
+      type: object
+      properties:
+        _id:
+          type: string
+        ownerId:
+          type: string
+        ownerName:
+          type: string
+        carDetails:
+          type: object
+          properties:
+            make:
+              type: string
+            model:
+              type: string
+            year:
+              type: integer
+            vin:
+              type: string
+            mileage:
+              type: integer
+        serviceType:
+          type: string
+        description:
+          type: string
+        urgency:
+          type: string
+          enum: [low, medium, high, emergency]
+        status:
+          type: string
+          enum: [open, quoted, accepted, in_progress, completed, cancelled]
+        location:
+          type: object
+          properties:
+            city:
+              type: string
+            state:
+              type: string
+            zipCode:
+              type: string
+        quotes:
+          type: array
+          items:
+            type: object
+        acceptedQuote:
+          type: object
+        metadata:
+          type: object
+          properties:
+            viewCount:
+              type: integer
+            lastViewedAt:
+              type: string
+              format: date-time
+        createdAt:
+          type: string
+          format: date-time
+
+    Quote:
+      type: object
+      properties:
+        id:
+          type: integer
+        request_id:
+          type: string
+        shop_id:
+          type: string
+        shop_name:
+          type: string
+        labor_cost:
+          type: number
+        parts_cost:
+          type: number
+        total_cost:
+          type: number
+        estimated_hours:
+          type: integer
+        description:
+          type: string
+        status:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    SparePart:
+      type: object
+      properties:
+        id:
+          type: integer
+        vendor_id:
+          type: string
+        name:
+          type: string
+        category:
+          type: string
+        price:
+          type: number
+        stock:
+          type: integer
+        description:
+          type: string
+        sku:
+          type: string
+        compatible_cars:
+          type: array
+          items:
+            type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+
+    ValidationError:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+              message:
+                type: string
+
+paths:
+  # Authentication endpoints
+  /api/auth/register:
+    post:
+      tags:
+        - Authentication
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+                - name
+                - role
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  minLength: 6
+                name:
+                  type: string
+                role:
+                  type: string
+                  enum: [car_owner, repair_shop, vendor]
+                phone:
+                  type: string
+                address:
+                  type: object
+                businessName:
+                  type: string
+                  description: Required for repair_shop and vendor roles
+                businessLicense:
+                  type: string
+                  description: Required for repair_shop and vendor roles
+      responses:
+        201:
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  user:
+                    $ref: '#/components/schemas/User'
+                  accessToken:
+                    type: string
+                  refreshToken:
+                    type: string
+        400:
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+        409:
+          description: User already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/auth/login:
+    post:
+      tags:
+        - Authentication
+      summary: Login user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+      responses:
+        200:
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  user:
+                    $ref: '#/components/schemas/User'
+                  accessToken:
+                    type: string
+                  refreshToken:
+                    type: string
+        401:
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        403:
+          description: Account is inactive
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api/auth/refresh:
+    post:
+      tags:
+        - Authentication
+      summary: Refresh access token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - refreshToken
+              properties:
+                refreshToken:
+                  type: string
+      responses:
+        200:
+          description: Token refreshed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessToken:
+                    type: string
+
+  /api/auth/logout:
+    post:
+      tags:
+        - Authentication
+      summary: Logout user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                refreshToken:
+                  type: string
+      responses:
+        200:
+          description: Logged out successfully
+
+  /api/auth/google:
+    get:
+      tags:
+        - Authentication
+      summary: Initiate Google OAuth
+      responses:
+        302:
+          description: Redirect to Google OAuth
+
+  /api/auth/google/callback:
+    get:
+      tags:
+        - Authentication
+      summary: Google OAuth callback
+      responses:
+        302:
+          description: Redirect to frontend with tokens
+
+  # Service Requests endpoints
+  /api/requests:
+    get:
+      tags:
+        - Service Requests
+      summary: Get service requests
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [open, quoted, accepted, in_progress, completed, cancelled]
+        - name: urgency
+          in: query
+          schema:
+            type: string
+            enum: [low, medium, high, emergency]
+        - name: make
+          in: query
+          schema:
+            type: string
+        - name: model
+          in: query
+          schema:
+            type: string
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
+      responses:
+        200:
+          description: List of service requests
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  requests:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ServiceRequest'
+                  pagination:
+                    type: object
+                    properties:
+                      page:
+                        type: integer
+                      limit:
+                        type: integer
+                      total:
+                        type: integer
+                      pages:
+                        type: integer
+
+    post:
+      tags:
+        - Service Requests
+      summary: Create new service request
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - carDetails
+                - serviceType
+                - description
+              properties:
+                carDetails:
+                  type: object
+                  required:
+                    - make
+                    - model
+                    - year
+                  properties:
+                    make:
+                      type: string
+                    model:
+                      type: string
+                    year:
+                      type: integer
+                    vin:
+                      type: string
+                    mileage:
+                      type: integer
+                serviceType:
+                  type: string
+                description:
+                  type: string
+                  minLength: 10
+                urgency:
+                  type: string
+                  enum: [low, medium, high, emergency]
+                  default: medium
+                location:
+                  type: object
+                  properties:
+                    city:
+                      type: string
+                    state:
+                      type: string
+                    zipCode:
+                      type: string
+      responses:
+        201:
+          description: Service request created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  request:
+                    $ref: '#/components/schemas/ServiceRequest'
+
+  /api/requests/{id}:
+    get:
+      tags:
+        - Service Requests
+      summary: Get single service request
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Service request details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServiceRequest'
+        404:
+          description: Request not found
+        403:
+          description: Unauthorized
+
+  /api/requests/{id}/status:
+    patch:
+      tags:
+        - Service Requests
+      summary: Update request status
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - status
+              properties:
+                status:
+                  type: string
+                  enum: [open, quoted, accepted, in_progress, completed, cancelled]
+      responses:
+        200:
+          description: Status updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  request:
+                    $ref: '#/components/schemas/ServiceRequest'
+
+  /api/requests/{id}/accept-quote:
+    post:
+      tags:
+        - Service Requests
+      summary: Accept a quote for service request
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - quoteId
+              properties:
+                quoteId:
+                  type: string
+      responses:
+        200:
+          description: Quote accepted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  request:
+                    $ref: '#/components/schemas/ServiceRequest'
+
+  # Quotes endpoints
+  /api/quotes:
+    post:
+      tags:
+        - Quotes
+      summary: Create a new quote
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - requestId
+                - laborCost
+                - partsCost
+                - estimatedHours
+              properties:
+                requestId:
+                  type: string
+                laborCost:
+                  type: number
+                  minimum: 0
+                partsCost:
+                  type: number
+                  minimum: 0
+                estimatedHours:
+                  type: integer
+                  minimum: 1
+                description:
+                  type: string
+      responses:
+        201:
+          description: Quote created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  quote:
+                    $ref: '#/components/schemas/Quote'
+
+  /api/quotes/request/{requestId}:
+    get:
+      tags:
+        - Quotes
+      summary: Get quotes for a service request
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: requestId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: List of quotes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Quote'
+
+  /api/quotes/shop/{shopId}:
+    get:
+      tags:
+        - Quotes
+      summary: Get quotes by repair shop
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: shopId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: List of quotes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Quote'
+        403:
+          description: Unauthorized
+
+  /api/quotes/{id}:
+    put:
+      tags:
+        - Quotes
+      summary: Update a quote
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                laborCost:
+                  type: number
+                partsCost:
+                  type: number
+                estimatedHours:
+                  type: integer
+                description:
+                  type: string
+      responses:
+        200:
+          description: Quote updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  quote:
+                    $ref: '#/components/schemas/Quote'
+
+  /api/quotes/analytics:
+    get:
+      tags:
+        - Quotes
+      summary: Get quote analytics
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: make
+          in: query
+          schema:
+            type: string
+        - name: model
+          in: query
+          schema:
+            type: string
+        - name: serviceType
+          in: query
+          schema:
+            type: string
+      responses:
+        200:
+          description: Quote analytics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  avg_cost:
+                    type: number
+                  min_cost:
+                    type: number
+                  max_cost:
+                    type: number
+                  avg_hours:
+                    type: number
+                  total_quotes:
+                    type: integer
+
+  # Parts endpoints
+  /api/parts:
+    get:
+      tags:
+        - Spare Parts
+      summary: Get all spare parts
+      parameters:
+        - name: category
+          in: query
+          schema:
+            type: string
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: minPrice
+          in: query
+          schema:
+            type: number
+        - name: maxPrice
+          in: query
+          schema:
+            type: number
+        - name: inStock
+          in: query
+          schema:
+            type: boolean
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+      responses:
+        200:
+          description: List of spare parts
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  parts:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SparePart'
+                  pagination:
+                    type: object
+                    properties:
+                      page:
+                        type: integer
+                      limit:
+                        type: integer
+                      total:
+                        type: integer
+                      pages:
+                        type: integer
+
+    post:
+      tags:
+        - Spare Parts
+      summary: Add new spare part
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - category
+                - price
+                - stock
+              properties:
+                name:
+                  type: string
+                category:
+                  type: string
+                price:
+                  type: number
+                  minimum: 0
+                stock:
+                  type: integer
+                  minimum: 0
+                description:
+                  type: string
+                sku:
+                  type: string
+                compatibleCars:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        201:
+          description: Part added successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  part:
+                    $ref: '#/components/schemas/SparePart'
+
+  /api/parts/{id}:
+    get:
+      tags:
+        - Spare Parts
+      summary: Get single spare part
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Spare part details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SparePart'
+        404:
+          description: Part not found
+
+    put:
+      tags:
+        - Spare Parts
+      summary: Update spare part
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - category
+                - price
+                - stock
+              properties:
+                name:
+                  type: string
+                category:
+                  type: string
+                price:
+                  type: number
+                stock:
+                  type: integer
+                description:
+                  type: string
+                sku:
+                  type: string
+                compatibleCars:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        200:
+          description: Part updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  part:
+                    $ref: '#/components/schemas/SparePart'
+
+  /api/parts/{id}/stock:
+    patch:
+      tags:
+        - Spare Parts
+      summary: Update part stock
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - stock
+              properties:
+                stock:
+                  type: integer
+                operation:
+                  type: string
+                  enum: [set, increment, decrement]
+                  default: set
+      responses:
+        200:
+          description: Stock updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  part:
+                    $ref: '#/components/schemas/SparePart'
+
+security:
+  - bearerAuth: []
+
+tags:
+  - name: Authentication
+    description: User authentication and authorization
+  - name: Service Requests
+    description: Car service request management
+  - name: Quotes
+    description: Repair shop quotes management
+  - name: Spare Parts
+    description: Vendor spare parts inventory

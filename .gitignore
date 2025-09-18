@@ -1,0 +1,297 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+.yarn/install-state.gz
+
+# Testing
+coverage/
+.nyc_output/
+test-results/
+junit.xml
+*.lcov
+
+# Production builds
+dist/
+build/
+out/
+.next/
+.nuxt/
+.vuepress/dist/
+.serverless/
+.fusebox/
+.dynamodb/
+.tern-port
+.vscode-test/
+.yarn/cache/
+.yarn/unplugged/
+.yarn/build-state.yml
+
+# Environment variables
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+.env*.local
+*.env
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# IDE and Editor files
+.idea/
+.vscode/
+*.swp
+*.swo
+*.swn
+*.bak
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+*.sublime-project
+.atom/
+.history/
+
+# Backend specific
+backend/dist/
+backend/build/
+backend/uploads/
+backend/sessions/
+backend/temp/
+backend/tmp/
+backend/cache/
+backend/logs/
+backend/api/logs/
+backend/api/uploads/
+backend/api/dist/
+backend/api/build/
+backend/mongodb_data/
+backend/postgres_data/
+backend/redis_data/
+backend/rabbitmq_data/
+backend/kafka_data/
+backend/elasticsearch_data/
+
+# Frontend specific
+frontend/.next/
+frontend/out/
+frontend/build/
+frontend/dist/
+frontend/.nuxt/
+frontend/.cache/
+frontend/public/uploads/
+
+# Database files
+*.sqlite
+*.sqlite3
+*.db
+data/
+*.sql
+*.dump
+
+# Docker
+docker-compose.override.yml
+.dockerignore
+*.dockerfile.local
+
+# Temporary files
+tmp/
+temp/
+.temp/
+.cache/
+*.tmp
+*.temp
+*.pid
+*.seed
+*.pid.lock
+
+# SSL Certificates and Keys
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+ssl/
+certs/
+
+# Package manager lock files (comment out if you want to commit these)
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
+
+# Backup files
+*.backup
+*.bak
+*.old
+backups/
+
+# PM2
+.pm2/
+pm2.log
+ecosystem.config.js.local
+
+# Monitoring
+newrelic_agent.log
+.apt_generated/
+
+# Documentation build
+docs/build/
+docs/.docusaurus/
+docs/.cache-loader/
+
+# Miscellaneous
+.sass-cache/
+.connect.lock
+.lock-wscript
+.node_repl_history
+.npm
+.eslintcache
+.stylelintcache
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+
+# Optional npm cache directory
+.npm/
+
+# Optional eslint cache
+.eslintcache
+
+# Optional stylelint cache
+.stylelintcache
+
+# Microbundle cache
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# dotenv environment variable files
+.env.development.local
+.env.test.local
+.env.production.local
+.env.local
+
+# parcel-bundler cache
+.cache
+.parcel-cache
+
+# Next.js
+.next
+out
+
+# Nuxt.js
+.nuxt
+dist
+
+# Gatsby files
+.cache/
+public
+
+# vuepress build output
+.vuepress/dist
+
+# vuepress v2.x temp and cache directory
+.temp
+
+# Docusaurus cache and generated files
+.docusaurus
+
+# Serverless directories
+.serverless/
+
+# FuseBox cache
+.fusebox/
+
+# DynamoDB Local files
+.dynamodb/
+
+# TernJS port file
+.tern-port
+
+# Stores VSCode versions used for testing VSCode extensions
+.vscode-test
+
+# yarn v2
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnp.*
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Optional stylelint cache
+.stylelintcache
+
+# SvelteKit build / generate output
+.svelte-kit
+
+# Terraform
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+
+# Kubernetes
+kubeconfig
+*.kubeconfig
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Vercel
+.vercel
+
+# Turborepo
+.turbo
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts

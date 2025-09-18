@@ -1,0 +1,78 @@
+syntax = "proto3";
+
+package inventory;
+
+service InventoryService {
+  rpc GetPart(PartRequest) returns (Part);
+  rpc ListParts(ListPartsRequest) returns (PartsList);
+  rpc AddPart(AddPartRequest) returns (Part);
+  rpc UpdateStock(UpdateStockRequest) returns (Part);
+  rpc SearchParts(SearchRequest) returns (PartsList);
+  rpc GetRealTimeStock(PartRequest) returns (StockInfo);
+}
+
+message Part {
+  int32 id = 1;
+  string vendor_id = 2;
+  string name = 3;
+  string category = 4;
+  double price = 5;
+  int32 stock = 6;
+  string description = 7;
+  string sku = 8;
+  repeated string compatible_cars = 9;
+  string created_at = 10;
+  string updated_at = 11;
+}
+
+message PartRequest {
+  int32 id = 1;
+}
+
+message ListPartsRequest {
+  string category = 1;
+  int32 page = 2;
+  int32 limit = 3;
+  bool in_stock = 4;
+}
+
+message PartsList {
+  repeated Part parts = 1;
+  int32 total = 2;
+  int32 page = 3;
+  int32 pages = 4;
+}
+
+message AddPartRequest {
+  string vendor_id = 1;
+  string name = 2;
+  string category = 3;
+  double price = 4;
+  int32 stock = 5;
+  string description = 6;
+  string sku = 7;
+  repeated string compatible_cars = 8;
+}
+
+message UpdateStockRequest {
+  int32 id = 1;
+  int32 stock = 2;
+  string operation = 3; // set, increment, decrement
+}
+
+message SearchRequest {
+  string query = 1;
+  string category = 2;
+  double min_price = 3;
+  double max_price = 4;
+  int32 page = 5;
+  int32 limit = 6;
+}
+
+message StockInfo {
+  int32 id = 1;
+  int32 current_stock = 2;
+  int32 reserved_stock = 3;
+  int32 available_stock = 4;
+  string last_updated = 5;
+}

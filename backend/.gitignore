@@ -1,0 +1,155 @@
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Environment variables
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+.env*.local
+*.env
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Build and compiled files
+dist/
+build/
+out/
+compiled/
+*.compiled
+*.min.js
+*.min.css
+
+# Testing
+coverage/
+.nyc_output/
+test-results/
+junit.xml
+*.lcov
+.coverage
+htmlcov/
+
+# Database
+*.sqlite
+*.sqlite3
+*.db
+data/
+mongodb_data/
+postgres_data/
+redis_data/
+
+# IDE and editor files
+.idea/
+.vscode/
+*.swp
+*.swo
+*.swn
+*.bak
+.DS_Store
+Thumbs.db
+.project
+.classpath
+.settings/
+*.sublime-*
+.atom/
+.history/
+
+# OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# Docker
+docker-compose.override.yml
+.dockerignore
+*.dockerfile.local
+
+# Temporary files
+tmp/
+temp/
+cache/
+.cache/
+*.tmp
+*.temp
+
+# Package manager files
+package-lock.json.backup
+yarn.lock.backup
+pnpm-lock.yaml.backup
+
+# Documentation
+docs/api/
+
+# Uploads and media
+uploads/
+public/uploads/
+media/
+files/
+
+# Session store
+sessions/
+.sessions/
+
+# Certificates and keys
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+ssl/
+certs/
+
+# Backup files
+*.backup
+*.bak
+*.old
+backups/
+
+# Monitoring and metrics
+.pm2/
+pm2.log
+newrelic_agent.log
+
+# Message queue data
+rabbitmq_data/
+kafka_data/
+
+# Elasticsearch
+elasticsearch_data/
+
+# Application specific
+src/**/*.js.map
+api/**/*.js.map
+
+# Terraform
+*.tfstate
+*.tfstate.*
+.terraform/
+
+# Kubernetes
+kubeconfig
+*.kubeconfig
